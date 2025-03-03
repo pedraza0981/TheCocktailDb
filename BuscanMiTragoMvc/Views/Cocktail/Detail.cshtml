@@ -1,0 +1,119 @@
+﻿@model BuscanMiTragoMvc.Models.CocktailDetail
+
+<div class="cocktail-container">
+    <h1 class="cocktail-title">@Model.StrDrink</h1>
+
+    <div class="cocktail-content">
+        
+        <div class="cocktail-image-container">
+            <img src="@Model.StrDrinkThumb" alt="@Model.StrDrink" class="cocktail-image" />
+        </div>
+
+        
+        <div class="cocktail-ingredients">
+            <h2>Ingredients</h2>
+            <div class="ingredients-grid">
+                @for (int i = 1; i <= 15; i++)
+                {
+                    var ingredient = Model.GetType().GetProperty($"StrIngredient{i}")?.GetValue(Model)?.ToString();
+                    var measure = Model.GetType().GetProperty($"StrMeasure{i}")?.GetValue(Model)?.ToString();
+
+                    if (!string.IsNullOrEmpty(ingredient))
+                    {
+                        <div class="ingredient-item">
+                            <img src="https://www.thecocktaildb.com/images/ingredients/@(ingredient)-Medium.png"
+                                 alt="@ingredient" class="ingredient-image" />
+                            <p>@(measure ?? "") @ingredient</p>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="return-button">
+        <a asp-action="Index" class="btn btn-warning">Volver a la Lista</a>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #2d0b17;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    .cocktail-container {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .cocktail-title {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .cocktail-content {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 40px;
+        flex-wrap: wrap;
+    }
+
+    .cocktail-image-container {
+        flex: 1;
+    }
+
+    .cocktail-image {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .cocktail-ingredients {
+        flex: 1;
+        text-align: left;
+    }
+
+    .ingredients-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 20px;
+        text-align: center;
+    }
+
+    .ingredient-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ingredient-image {
+        width: 80px;
+        height: auto;
+        margin-bottom: 5px;
+    }
+
+    .return-button {
+        margin-top: 30px;
+    }
+
+    .btn-warning {
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: black;
+        background-color: #ffc107;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+</style>

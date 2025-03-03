@@ -1,0 +1,52 @@
+﻿@model BuscanMiTragoMvc.Models.CocktailSearchResult
+
+<h1 class="text-center">Browse Cocktails</h1>
+
+<div class="cocktail-grid">
+    @foreach (var drink in Model.Drinks)
+    {
+        <div class="cocktail-item">
+            <a asp-action="Detail" asp-route-id="@drink.IdDrink">
+                <img src="@drink.StrDrinkThumb" alt="@drink.StrDrink" class="cocktail-image" />
+            </a>
+            <p class="cocktail-name">@drink.StrDrink</p>
+        </div>
+    }
+</div>
+
+<style>
+    body {
+        background-color: #2d0b17;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    .cocktail-grid {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    .cocktail-item {
+        text-align: center;
+        width: 200px;
+    }
+
+    .cocktail-image {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .cocktail-name {
+        margin-top: 10px;
+        font-size: 16px;
+    }
+
+    h1 {
+        margin-top: 20px;
+    }
+</style>

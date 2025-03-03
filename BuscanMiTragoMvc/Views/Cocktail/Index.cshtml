@@ -1,0 +1,125 @@
+﻿@model BuscanMiTragoMvc.Models.CocktailSearchResult
+
+@{
+    ViewData["Title"] = "Buscar Cócteles";
+}
+
+<h1 class="text-center text-light mb-4">Browse Cocktails</h1>
+
+<form asp-action="Search" method="post" class="mb-4">
+    <div class="form-group">
+        <label for="searchType" class="text-light">Búsqueda (Nombre o Ingrediente)</label>
+        <select class="form-control" id="searchType" name="searchType" required>
+            <option value="name">Nombre</option>
+            <option value="ingredient">Ingrediente</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="searchTerm" class="text-light">Nombre</label>
+        <input type="text" class="form-control" id="searchTerm" name="searchTerm" placeholder="Cóctel o ingrediente" required />
+    </div>
+
+    <button type="submit" class="btn btn-warning mt-2">Buscar</button>
+</form>
+
+@if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+{
+    <p class="text-light text-center">@ViewBag.ErrorMessage</p>
+}
+
+@if (Model != null && Model.Drinks != null && Model.Drinks.Any())
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var drink in Model.Drinks)
+            {
+                <div class="col-md-3 col-sm-6 text-center mb-4">
+                    <a asp-action="Detail" asp-route-id="@drink.IdDrink" class="text-decoration-none text-light">
+                        <div class="card bg-dark border-0">
+                            <img src="@drink.StrDrinkThumb" class="card-img-top rounded" alt="@drink.StrDrink" />
+                            <div class="card-body">
+                                <p class="card-text">@drink.StrDrink</p>
+                                <button class="btn btn-success mt-2" onclick="addToFavorites('@drink.IdDrink', '@drink.StrDrink', '@drink.StrDrinkThumb')">Agregar a Favoritos</button>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<div id="favoritesSection" style="display: none;">
+    <h2 class="text-center text-light mt-4">Mis Cócteles Favoritos</h2>
+    <div id="favoritesList" class="container">
+       
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #2a0a1b;
+    }
+
+    .card {
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            height: 200px;
+            object-fit: cover;
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        loadFavorites();
+    });
+
+    function addToFavorites(id, name, thumb) {
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        if (!favorites.some(fav => fav.id === id)) {
+            favorites.push({ id, name, thumb });
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            loadFavorites();
+        }
+    }
+
+    function removeFromFavorites(id) {
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        favorites = favorites.filter(fav => fav.id !== id);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        loadFavorites();
+    }
+
+    function loadFavorites() {
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let favoritesList = document.getElementById('favoritesList');
+        let favoritesSection = document.getElementById('favoritesSection');
+        favoritesList.innerHTML = '';
+
+        if (favorites.length > 0) {
+            favoritesSection.style.display = 'block';
+            favorites.forEach(fav => {
+                let favItem = document.createElement('div');
+                favItem.className = 'col-md-3 col-sm-6 text-center mb-4';
+                favItem.innerHTML = `
+                    <div class="card bg-dark border-0">
+                        <img src="${fav.thumb}" class="card-img-top rounded" alt="${fav.name}" />
+                        <div class="card-body">
+                            <p class="card-text">${fav.name}</p>
+                            <button class="btn btn-danger mt-2" onclick="removeFromFavorites('${fav.id}')">Remover</button>
+                        </div>
+                    </div>
+                `;
+                favoritesList.appendChild(favItem);
+            });
+        } else {
+            favoritesSection.style.display = 'none';
+        }
+    }
+</script>
